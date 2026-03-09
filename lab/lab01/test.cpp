@@ -32,7 +32,7 @@ int main()
     MatrixWithLabel l2 = l1;
     MatrixWithLabel l3 = std::move(l1);
     cout << l2.getLabel() << " " << l3.getLabel() << endl;
-    // 	cout << l1.getLabel() << endl;
+    cout << l1.getLabel() << endl;
 
     return 0;
 }

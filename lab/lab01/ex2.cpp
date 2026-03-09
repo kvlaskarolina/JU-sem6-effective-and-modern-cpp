@@ -18,12 +18,20 @@ Matrix::Matrix(Matrix &&other) : row(other.row), col(other.col), data(other.data
     other.col = 0;
     other.data = nullptr;
 }
-Matrix &Matrix::operator-(Matrix &other) const
+Matrix Matrix::operator-(Matrix &other) const
 {
     cout << "Unary operator - called\n";
     Matrix result(other.row, other.col);
     for (int i = 0; i < other.row * other.col; i++)
         result.data[i] = -other.data[i];
+    return result;
+}
+Matrix Matrix::operator-() const
+{
+    cout << "Unary operator2 - called\n";
+    Matrix result(row, col);
+    for (int i = 0; i < row * col; i++)
+        result.data[i] = -data[i];
     return result;
 }
 Matrix &Matrix::operator=(Matrix &&other)
