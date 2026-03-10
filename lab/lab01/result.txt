@@ -1,0 +1,41 @@
+Default constructor called
+Matrix constructor called
+Initializer list constructor called
+0
+23
+1 2 3 0 
+32 23 22 0 
+3 234 23 44 
+Copy semantics 
+Copy constructor called
+Copy assignment operator called
+Move semantics 
+Move constructor called
+Unary operator2 - called
+Matrix constructor called
+Move assignment operator called
+Destructor called
+Copy elision 
+Unary operator2 - called
+Matrix constructor called
+Unary operator2 - called
+Matrix constructor called
+32
+Inheritance 
+Matrix constructor called
+MatrixWithLabel constructor called
+Initializer list constructor called
+Copy constructor called
+Move constructor called
+AA AA
+
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called
+Destructor called

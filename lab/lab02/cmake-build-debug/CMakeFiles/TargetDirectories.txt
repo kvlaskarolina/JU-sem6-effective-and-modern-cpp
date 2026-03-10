@@ -1,0 +1,6 @@
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/DynamicContainer.dir
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/StaticContainer.dir
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/StaticContainer2.dir
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/String.dir
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/karo/Desktop/JU-sem6-effective-and-modern-cpp/lab/lab02/cmake-build-debug/CMakeFiles/rebuild_cache.dir
