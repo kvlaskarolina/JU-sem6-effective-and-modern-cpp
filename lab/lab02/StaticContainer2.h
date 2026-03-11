@@ -2,18 +2,18 @@
 #include <iostream>
 #include "Box.h"
 
-// Exercise: modify code so that appropriate constructor and operators are called using just default and delete keyword.
 class Container : public Box
 {
 public:
     static bool verbose;
-    Container(int content) : Box(content) {};         // implement
-    Container(const Container &container);            // disable
-    Container &operator=(const Container &container); // disable
+    Container(int content) : Box(content) {};
 
-    Container(Container &&container);            // enable
-    Container &operator=(Container &&container); // enable
-    ~Container();                                // enable
+    Container(const Container &container) = delete;            // disable copy constructor
+    Container &operator=(const Container &container) = delete; // disable copy assignment
+
+    Container(Container &&container) = default;            // enable move constructor
+    Container &operator=(Container &&container) = default; // enable move assignment
+    ~Container() = default;                                // enable destructor
 
     friend Container operator+(const Container &p1, const Container &p2);
     friend std::ostream &operator<<(std::ostream &out, const Container &p)
