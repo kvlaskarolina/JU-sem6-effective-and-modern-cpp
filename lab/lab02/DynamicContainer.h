@@ -7,15 +7,15 @@ using namespace std;
 class Container
 {
     // Exercise 2: Use smart pointer.
-    Box *pbox = nullptr;
+    unique_ptr<Box> pbox = nullptr;
 
 public:
     static bool verbose;
-    Container(int content) : pbox(new Box)
+    Container(int content) : pbox(new Box(content))
     {
         if (verbose)
             cout << "Creating Container" << endl;
-        pbox->setContent(content);
+        // pbox->setContent(content);
     }
     Container(const Container &container) : pbox(new Box{*(container.pbox)})
     {
@@ -32,11 +32,27 @@ public:
         }
         return *this;
     }
+    // move
+    Container(Container &&container) : pbox(std::move(container.pbox))
+    {
+        if (verbose)
+            cout << "Moving Container\n";
+    }
+    Container &operator=(Container &&container)
+    {
+        if (this != &container)
+        {
+            if (verbose)
+                cout << "Move assigning Container\n";
+            pbox = std::move(container.pbox);
+        }
+        return *this;
+    }
     ~Container()
     {
         if (verbose)
             cout << "Destroying Container \n";
-        delete pbox;
+        // delete pbox;
     }
     friend Container operator+(const Container &p1, const Container &p2);
     friend std::ostream &operator<<(std::ostream &out, const Container &p)
