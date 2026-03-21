@@ -38,16 +38,6 @@ public:
         if (verbose)
             cout << "Moving Container\n";
     }
-    Container &operator=(Container &&container)
-    {
-        if (this != &container)
-        {
-            if (verbose)
-                cout << "Move assigning Container\n";
-            pbox = std::move(container.pbox);
-        }
-        return *this;
-    }
     ~Container()
     {
         if (verbose)

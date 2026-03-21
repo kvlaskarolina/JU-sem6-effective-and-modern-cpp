@@ -6,7 +6,17 @@
 using namespace std;
 class Printer
 {
-    /// TODO
+    ostream &out;
+    string prefix;
+    string postfix;
+
+public:
+    Printer(ostream &out, string prefix, string postfix) : out(out), prefix(prefix), postfix(postfix) {}
+    template <typename T>
+    void operator()(const T &x) const
+    {
+        out << prefix << x << postfix;
+    }
 };
 
 int main()
