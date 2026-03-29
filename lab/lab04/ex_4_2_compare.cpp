@@ -10,6 +10,32 @@ struct Rational
     }
 };
 
+template <typename T>
+int compare(const T &a, const T &b)
+{
+    if (a < b)
+        return -1;
+    if (b < a)
+        return 1;
+    return 0;
+}
+
+template <typename T>
+int compare(const T *a, const T *b)
+{
+    if (*a < *b)
+        return -1;
+    if (*b < *a)
+        return 1;
+    return 0;
+}
+
+int compare(const char *a, const char *b)
+{
+    int result = strcmp(a, b);
+    return (result < 0) ? -1 : (result > 0 ? 1 : 0);
+}
+
 int main()
 {
     int a = 1, b = -6;
