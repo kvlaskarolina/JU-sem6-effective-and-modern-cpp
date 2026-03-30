@@ -6,10 +6,23 @@ using namespace std;
 
 bool biggerThan5(int x) { return x > 5; }
 
-/// TODO
-template... OutContainer<T, Alloc> selectIf(InContainer<T, Alloc> c, Predicate p)
+template <
+    template <typename, typename> class OutContainer,
+    template <typename, typename> class InContainer,
+    typename T,
+    typename Alloc,
+    typename Predicate>
+OutContainer<T, Alloc> selectIf(const InContainer<T, Alloc> &c, Predicate p)
 {
-    // ....
+    OutContainer<T, Alloc> result;
+    for (const auto &x : c)
+    {
+        if (p(x))
+        {
+            result.push_back(x);
+        }
+    }
+    return result;
 }
 
 int main()
