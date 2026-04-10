@@ -20,14 +20,49 @@ public:
     typedef T &reference;
     typedef const T &const_reference;
 
-    Vector() { /* TODO */ }
-    Vector(const Vector &v) { /* TODO */ }
-    Vector &operator=(const Vector &m) { /* TODO */ }
-    Vector(const std::initializer_list<T> &list) { /* TarrayODO */ }
+    Vector()
+    {
+        for (auto &elem : data)
+        {
+            elem = T();
+        }
+    }
+    Vector(const Vector &v)
+    {
+        for (size_type i = 0; i < N; ++i)
+        {
+            data[i] = v.data[i];
+        }
+    }
+    Vector &operator=(const Vector &m)
+    {
+        if (this != &m)
+        {
+            for (size_type i = 0; i < N; ++i)
+            {
+                data[i] = m.data[i];
+            }
+        }
+        return *this;
+    }
+    Vector(const std::initializer_list<T> &list)
+    {
+        assert(list.size() == N);
+        size_type i = 0;
+        for (const auto &elem : list)
+        {
+            data[i++] = elem;
+        }
+    }
 
     friend Vector operator+(const Vector &u, const Vector &v)
     {
-        // TODO
+        Vector result;
+        for (size_type i = 0; i < N; ++i)
+        {
+            result.data[i] = u.data[i] + v.data[i];
+        }
+        return result;
     }
 
     constexpr size_type size() const

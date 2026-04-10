@@ -1,7 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include "solutions/staticVector.h"
+#include "staticVector.h"
 
 using namespace std;
 #define LOG(x) std::cout << #x << " = " << (x) << std::endl
