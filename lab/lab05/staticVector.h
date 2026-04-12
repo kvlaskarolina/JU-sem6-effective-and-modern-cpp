@@ -54,6 +54,14 @@ public:
             data[i++] = elem;
         }
     }
+    Vector(const Vector<T, 0> &v)
+    {
+        assert(v.size() == N);
+        for (size_type i = 0; i < N; ++i)
+        {
+            data[i] = v.get(i);
+        }
+    }
 
     friend Vector operator+(const Vector &u, const Vector &v)
     {
@@ -64,15 +72,24 @@ public:
         }
         return result;
     }
+    const_reference get(size_type index) const
+    {
+        return data[index];
+    }
+    friend Vector operator+(const Vector &u, const Vector<T, 0> &v)
+    {
+        assert(v.size() == N);
+        Vector result;
+        for (size_type i = 0; i < N; ++i)
+        {
+            result.data[i] = u.data[i] + v.data_[i];
+        }
+        return result;
+    }
 
     constexpr size_type size() const
     {
         return N;
-    }
-
-    const_reference get(size_type index) const
-    {
-        return data[index];
     }
 
     void set(size_type index, const_reference value)

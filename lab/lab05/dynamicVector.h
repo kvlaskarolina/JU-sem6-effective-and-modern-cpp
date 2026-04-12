@@ -55,7 +55,15 @@ public:
             data_[i++] = elem;
         }
     }
-
+    template <size_t N>
+    Vector(const Vector<T, N> &v) : size_(N)
+    {
+        data_ = new T[size_];
+        for (size_type i = 0; i < size_; ++i)
+        {
+            data_[i] = v.data_[i];
+        }
+    }
     void resize(size_type new_size)
     {
         if (new_size != size_)
@@ -87,6 +95,20 @@ public:
         }
         return result;
     }
+    template <size_t N>
+    friend Vector operator+(const Vector &u, const Vector<T, N> &v)
+    {
+        if (u.size_ != N)
+        {
+            throw std::runtime_error("incompatible sizes in Vector::operator+");
+        }
+        Vector result(u.size_);
+        for (size_type i = 0; i < u.size_; ++i)
+        {
+            result.data_[i] = u.data_[i] + v[i];
+        }
+        return result;
+    }
     friend std::ostream &operator<<(std::ostream &out, const Vector &v)
     {
         for (size_type i = 0; i < v.size_; ++i)
@@ -97,11 +119,16 @@ public:
         }
         return out;
     }
+
     reference operator[](size_type index)
     {
         return data_[index];
     }
     const_reference operator[](size_type index) const
+    {
+        return data_[index];
+    }
+    const_reference get(size_type index) const
     {
         return data_[index];
     }
