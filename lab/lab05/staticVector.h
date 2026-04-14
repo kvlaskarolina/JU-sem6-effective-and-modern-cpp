@@ -62,7 +62,13 @@ public:
             data[i] = v.get(i);
         }
     }
-
+    template <typename U, size_t M>
+    explicit Vector(const Vector<U, M> &other)
+    {
+        static_assert(M == N, "Cannot convert vectors of different dimensions");
+        for (size_t i = 0; i < N; i++)
+            data[i] = static_cast<T>(other[i]);
+    }
     friend Vector operator+(const Vector &u, const Vector &v)
     {
         Vector result;

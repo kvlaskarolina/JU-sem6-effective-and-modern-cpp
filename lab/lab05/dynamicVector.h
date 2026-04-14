@@ -1,5 +1,12 @@
 #include "staticVector.h"
 
+class VectorException : public std::runtime_error
+{
+public:
+    explicit VectorException(const std::string &message)
+        : std::runtime_error(message) {}
+};
+
 template <typename T>
 class Vector<T, 0>
 {
@@ -86,7 +93,7 @@ public:
     {
         if (u.size_ != v.size_)
         {
-            throw std::runtime_error("incompatible sizes in Vector::operator+");
+            throw VectorException("incompatible sizes in Vector::operator+");
         }
         Vector result(u.size_);
         for (size_type i = 0; i < u.size_; ++i)
@@ -100,7 +107,7 @@ public:
     {
         if (u.size_ != N)
         {
-            throw std::runtime_error("incompatible sizes in Vector::operator+");
+            throw VectorException("incompatible sizes in Vector::operator+");
         }
         Vector result(u.size_);
         for (size_type i = 0; i < u.size_; ++i)
@@ -119,7 +126,6 @@ public:
         }
         return out;
     }
-
     reference operator[](size_type index)
     {
         return data_[index];
@@ -137,9 +143,3 @@ public:
         return size_;
     }
 };
-
-// TODO operator +
-/*
-Operator+ should throw an exception if sizes do not match. The exception should be of a user
-defined type VectorException that is derived from runtime_error.
-*/
