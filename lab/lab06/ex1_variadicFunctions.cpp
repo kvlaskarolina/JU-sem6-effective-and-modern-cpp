@@ -9,9 +9,25 @@ int f(int x)
 }
 int cube(int x)
 {
-    return x * x * X;
+    return x * x * x;
 }
-
+template <typename... Args>
+float average(Args... args)
+{
+    float sum = (args + ...);
+    return sum / sizeof...(args);
+}
+template <typename... Args>
+float computeSum(int (*func)(int), Args... args)
+{
+    float sum = (func(args) + ...);
+    return sum;
+}
+template <typename T, typename... Args>
+void insert(std::vector<T> &v, Args... args)
+{
+    (v.push_back(args), ...);
+}
 int main()
 {
 
