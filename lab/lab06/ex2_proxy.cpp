@@ -1,5 +1,6 @@
 #include <iostream>
 #include <typeinfo>
+#include "proxy.h"
 // #include <boost/type_index.hpp>
 using namespace std;
 
