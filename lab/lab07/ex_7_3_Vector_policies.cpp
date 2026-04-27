@@ -3,34 +3,40 @@
 using  namespace std;
 int main() {
     int value = 5;
-    {  /// sets coordinates to zero and checks indices
+    {
         using Vect = Vector<double, 3, SafePolicy>;
         Vect a{};
-        a.set(1, -1);              // OK
-        cout << a << endl;         // 0 -1 0
-        a.set(-1, 1.);             // Exception
-        cout << a.get(3) << endl;  // Exception
-        Vect b{1, 2, 3, 4};        // Exception
+        a.set(1, -1);
+        cout << a << endl;              // 0 -1 0
+
+        try { a.set(-1, 1.); }
+        catch (const std::exception& e) { cout << "Exception: " << e.what() << "\n"; }
+
+        try { cout << a.get(3) << endl; }
+        catch (const std::exception& e) { cout << "Exception: " << e.what() << "\n"; }
+
+        try { Vect b{1, 2, 3, 4}; }
+        catch (const std::exception& e) { cout << "Exception: " << e.what() << "\n"; }
     }
-    { /// does not initialize by default and does not check indices
+    {
         using Vect = Vector<double, 3, FastPolicy>;
         Vect a{};
-        a.set(1, -1);              // OK
-        cout << a << endl;         // Unspecified (random values on first and third coordinate)
-        a.set(-1, 1.);             // Unspecified
-        cout << value << endl;     // value possibly changed by the previous line
-        cout << a.get(3) << endl;  // Unspecified
-        Vect b{1, 2, 3, 4};        // OK: it makes copy of only first three values
+        a.set(1, -1);
+        cout << a << endl;             // unspecified garbage for [0] and [2]
+        a.set(-1, 1.);                 // writes to random memory
+        cout << value << endl;         // possibly corrupted
+        cout << a.get(3) << endl;      // unspecified
+        Vect b{1, 2, 3, 4};           // OK, copies only first 3
     }
-    { /// initializes to zero by default but does not check indices
+    {
         using Vect = Vector<double, 3, InitFastPolicy>;
         Vect a{};
-        a.set(1, -1);              // OK
-        cout << a << endl;         // OK: 0 -1 0
-        a.set(-1, 1.);             // Unspecified
-        cout << value << endl;     // value possibly changed by the previous line
-        cout << a.get(3) << endl;  // Unspecified
-        Vect b{1, 2, 3, 4};        // OK: it makes copy of only first three values
+        a.set(1, -1);
+        cout << a << endl;             // 0 -1 0
+        a.set(-1, 1.);                 // unspecified
+        cout << value << endl;         // possibly corrupted
+        cout << a.get(3) << endl;      // unspecified
+        Vect b{1, 2, 3, 4};           // OK, copies only first 3
     }
     return 0;
 }

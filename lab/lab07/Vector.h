@@ -7,6 +7,8 @@
 #include <cassert>
 #include <vector>
 #include <cmath>
+
+
 template <typename T>
 struct vector_traits {
   using param_type = const T&;
@@ -61,7 +63,51 @@ struct vector_traits<std::string> {
       return result;
   }
 };
-template <typename T, size_t N >
+
+struct InitPolicy {
+  template <typename T, size_t N>
+  static void init(T (&data)[N]) {
+      for (size_t i = 0; i < N; ++i)
+          data[i] = vector_traits<T>::zero();
+  }
+};
+
+struct NoInitPolicy {
+  template <typename T, size_t N>
+  static void init(T (&data)[N]) {
+      // do nothing
+  }
+};
+
+struct CheckPolicy {
+  static void check(size_t index, size_t size) {
+      if (index >= size)
+          throw std::out_of_range(
+              "Index " + std::to_string(index) +
+              " out of range [0, " + std::to_string(size) + ")"
+          );
+  }
+};
+
+struct NoCheckPolicy {
+  static void check(size_t index, size_t size) {
+      // do nothing
+  }
+};
+
+template <typename InitP, typename CheckP>
+struct Policy : public InitP, public CheckP {
+    using init_policy  = InitP;
+    using check_policy = CheckP;
+};
+
+using SafePolicy = Policy<InitPolicy,   CheckPolicy>;  
+using FastPolicy = Policy<NoInitPolicy, NoCheckPolicy>;  
+
+using InitFastPolicy = Policy<InitPolicy, NoCheckPolicy>;
+
+
+template <typename T, size_t N, typename P = SafePolicy>
 class Vector {
   T data[N];
 
@@ -79,7 +125,7 @@ class Vector {
 
   Vector() {
     for (size_t i = 0; i < N; ++i)
-        data[i] = traits::zero(); 
+    P::init(data); 
 }
   Vector(const Vector & v) = default;
   Vector &operator=(const Vector & m) = default;
@@ -92,10 +138,12 @@ class Vector {
   }
 
   return_type get(size_type index) const {
+    P::check(index, N);
     return data[index];
 }
 
   void set(size_type index, const_reference value) {
+    P::check(index, N);
 	data[index] = value;
   }
 
