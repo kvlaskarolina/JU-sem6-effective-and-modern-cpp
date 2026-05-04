@@ -1,0 +1,87 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "lab8",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Filter::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Filter-Debug-d95d23260f3c17133618.json",
+					"name" : "Filter",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MatrixIterator::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MatrixIterator-Debug-996555cf3ea56aabf954.json",
+					"name" : "MatrixIterator",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MatrixModifiers::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MatrixModifiers-Debug-e7cb53d7d88e7cf1b075.json",
+					"name" : "MatrixModifiers",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Range::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Range-Debug-3b258699f4d0e337353f.json",
+					"name" : "Range",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/tom/Dropbox/zajecia/EMCPP2026/exercises/lab08_Iterators/code/cmake-build-debug",
+		"source" : "/Users/tom/Dropbox/zajecia/EMCPP2026/exercises/lab08_Iterators/code"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
