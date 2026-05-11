@@ -1,50 +1,94 @@
-#include <iostream>
-#include <tuple>
+#pragma once
 #include <vector>
-#include <string>
-#include <sstream>
+#include <tuple>
+#include <iostream>
 
-template<typename Target, typename... Pack>
-constexpr std::size_t indexOfFirst() {
-    std::size_t i = 0;
-    bool found = false;
-    ((std::is_same_v<Target, Pack> 
-        ? (found ? (void)0 : (void)(found = true))
-        : (void)++i), ...);
-    return i;
-}
+template <typename T, typename... Ts>
+struct index_of;
 
-template<class... Types>
+template <typename T, typename First, typename... Rest>
+struct index_of<T, First, Rest...> {
+    static constexpr std::size_t value = 1 + index_of<T, Rest...>::value;
+};
+
+template <typename T, typename... Rest> 
+struct index_of<T, T, Rest...> {
+    static constexpr std::size_t value = 0;
+};
+
+
+template <typename T, typename... Ts>
+struct mv_is_one_of : std::false_type {};
+
+template <typename T, typename First, typename... Rest>
+struct mv_is_one_of<T, First, Rest...>
+    : std::conditional_t<std::is_same<T, First>::value,
+                         std::true_type,
+                         mv_is_one_of<T, Rest...>> {};
+
+template <typename... Types>
 class MultiVector {
-    std::tuple<std::vector<Types>...> data_;
+    static_assert(sizeof...(Types) > 0, "MultiVector requires at least one type");
+
+    using Storage = std::tuple<std::vector<Types>...>;
+    Storage storage_;
+
+    template <std::size_t I>
+    void print_one() const {
+        std::cout << "[ ";
+        for (const auto& v : std::get<I>(storage_))
+            std::cout << v << ' ';
+        std::cout << ']';
+    }
+
+    template <std::size_t... Is>
+    void print_impl(std::index_sequence<Is...>) const {
+        bool first = true;
+        ((void)(first ? (void)(first = false) : (void)(std::cout << ' '),
+                print_one<Is>()), ...);
+        std::cout << '\n';
+    }
+
 public:
-template<typename T>
-void push_back(T&& value) {
-    using DecayedT = std::decay_t<T>;
-    constexpr std::size_t idx = indexOfFirst<std::vector<DecayedT>,
-                                             std::vector<Types>...>();
-    using VecType = std::tuple_element_t<idx, std::tuple<std::vector<Types>...>>;
-    using ElemType = typename VecType::value_type;
-    std::get<idx>(data_).push_back(static_cast<ElemType>(std::forward<T>(value)));
-}
+    template <typename T>
+    void push_back(T&& value) {
+        using D = std::decay_t<T>;
+        static_assert(mv_is_one_of<D, Types...>::value,
+                      "Type not in MultiVector's type list");
+        constexpr std::size_t I = index_of<D, Types...>::value;
+        std::get<I>(storage_).push_back(std::forward<T>(value));
+    }
 
     void print() const {
-        printImpl(std::index_sequence_for<Types...>{});
+        print_impl(std::index_sequence_for<Types...>{});
+    }
+
+    template <typename T>
+    std::vector<T>& get() {
+        static_assert(mv_is_one_of<T, Types...>::value,
+                      "Type not in MultiVector's type list");
+        return std::get<index_of<T, Types...>::value>(storage_);
+    }
+
+    template <typename T>
+    const std::vector<T>& get() const {
+        static_assert(mv_is_one_of<T, Types...>::value,
+                      "Type not in MultiVector's type list");
+        return std::get<index_of<T, Types...>::value>(storage_);
+    }
+
+    template <typename T>
+    std::size_t size() const { return get<T>().size(); }
+
+    std::size_t total_size() const {
+        return total_size_impl(std::index_sequence_for<Types...>{});
     }
 
 private:
-    template<std::size_t... Is>
-    void printImpl(std::index_sequence<Is...>) const {
-        ((std::cout << "[ " << printVector(std::get<Is>(data_)) << "] "), ...);
-        std::cout << std::endl;
-    }
-
-    template<typename T>
-    std::string printVector(const std::vector<T>& vec) const {
-        std::ostringstream oss;
-        for (const auto& elem : vec) {
-            oss << elem << " ";
-        }
-        return oss.str();
+    template <std::size_t... Is>
+    std::size_t total_size_impl(std::index_sequence<Is...>) const {
+        std::size_t n = 0;
+        ((n += std::get<Is>(storage_).size()), ...);
+        return n;
     }
 };
