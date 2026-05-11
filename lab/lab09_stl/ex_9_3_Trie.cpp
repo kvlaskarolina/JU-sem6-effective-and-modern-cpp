@@ -1,44 +1,82 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <map>
 using namespace std;
-/**
- * Trie structure
- *
- * HINT: use std::map to implement it!
- *       My implementation adds less than 25 lines of code. 
- */
-class Trie{
-  /// TODO:
+
+class Trie {
+private:
+    std::map<string, Trie*> children;
+    bool isEnd = false;
+
 public:
-    static void printSentence(const std::vector<std::string>  & sentence ){
-        for(const auto & w : sentence)
+    Trie() {}  // <-- this was missing!
+
+    static void printSentence(const std::vector<std::string>& sentence) {
+        for (const auto& w : sentence)
             cout << w << " ";
     }
-    void add(const std::vector<std::string>  & sentece ){
-       cout << "Adding : ";
-       printSentence(sentece);
-       cout << "\n";
-       /// TODO:
+
+    void add(const std::vector<std::string>& sentence, int index = 0) {
+        if (index == 0) {
+            cout << "Adding : ";
+            printSentence(sentence);
+            cout << "\n";
+        }
+        if (index == (int)sentence.size()) {
+            isEnd = true;
+            return;
+        }
+
+        const std::string& word = sentence[index];
+        if (children.find(word) == children.end())
+            children[word] = new Trie();
+
+        children[word]->add(sentence, index + 1);
     }
-    void printPossibleEndings(const std::vector<std::string>  & beginningOfSentece ){
+
+    void printPossibleEndings(const std::vector<std::string>& beginning) {
         cout << "Endings for \"";
-        printSentence(beginningOfSentece);
+        printSentence(beginning);
         cout << "\" are :\n";
-        // TODO:
+
+        Trie* current = this;
+        for (const auto& w : beginning) {
+            if (current->children.find(w) == current->children.end()) {
+                cout << " No such sentence in the dictionary.\n";
+                return;
+            }
+            current = current->children[w];
+        }
+
+        printEndings(current, beginning);
     }
-    void load(const std::string & fileName){
+
+    void printEndings(Trie* node, const std::vector<std::string>& prefix) {
+        if (node->isEnd) {
+            cout << " > ";
+            printSentence(prefix);
+            cout << "\n";
+            return;
+        }
+        for (const auto& child : node->children) {
+            std::vector<std::string> newPrefix = prefix;
+            newPrefix.push_back(child.first);
+            printEndings(child.second, newPrefix);
+        }
+    }
+
+    void load(const std::string& fileName) {
         ifstream file(fileName);
-        if(!file){
-            cerr << "Error when openning file " << fileName << endl;
+        if (!file) {
+            cerr << "Error when opening file " << fileName << endl;
             return;
         }
         string word;
         vector<string> sentence;
-        while( file >> word) {
+        while (file >> word) {
             sentence.push_back(word);
-            // is it end of the sentence?
-            if(word.find_last_of('.') != string::npos) {
+            if (word.find_last_of('.') != string::npos) {
                 add(sentence);
                 sentence.clear();
             }
@@ -49,7 +87,7 @@ public:
 
 int main(){
     Trie dictionary;
-    dictionary.load("../sample.txt");
+    dictionary.load("sample.txt");
     //dictionary.load("hamletEN.txt");
 
     dictionary.printPossibleEndings({"Curiosity"});
