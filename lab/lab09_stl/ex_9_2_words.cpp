@@ -1,19 +1,45 @@
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
 
 /**
  * Removes all non alphanumeric characters from given word and converts to lower case.
  * @param[in,out] word on return word consist only of lower case characters.
  */
-void toLowerAlpha(std::string & s1) ;
+void toLowerAlpha(std::string & s1) {
+    s1.erase(std::remove_if(s1.begin(), s1.end(), [](char c){ return !std::isalnum(c); }), s1.end());
+    std::transform(s1.begin(), s1.end(), s1.begin(), [](char c){ return std::tolower(c); });
+}
 
 int main(){
     int count = 0;
 
 
-    cout << "Number of distinct words : " << count << endl;
-    cout << "\nThe top 20 most popular words: \n";
+    map<string,int> wordCount;
+    string word;
+        while (cin >> word) {
+            toLowerAlpha(word);
+            if (!word.empty()) {
+                if (wordCount.find(word) == wordCount.end()) {
+                    ++count; 
+                }
+                ++wordCount[word];
+            }
+        }
+        vector<pair<string,int>> wordVector(wordCount.begin(), wordCount.end());
+        sort(wordVector.begin(), wordVector.end(), [](const pair<string,int>& a, const pair<string,int>& b) {
+            return a.second > b.second; // Sort in descending order of count
+        });
+        
+        cout << "Number of distinct words : " << count << endl;
+        cout << "\nThe top 20 most popular words: \n";
+
+        for (size_t i = 0; i < min(wordVector.size(), size_t(20)); ++i) {
+            cout << wordVector[i].first << " : " << wordVector[i].second << endl;
+        }
+        
+
     // ...
     return 0;
 }
