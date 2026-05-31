@@ -10,10 +10,10 @@ private:
     bool isEnd = false;
 
 public:
-    Trie() {}  // <-- this was missing!
+    Trie() {}
 
     static void printSentence(const std::vector<std::string>& sentence) {
-        for (const auto& w : sentence)
+        for (const auto& w : sentence)   
             cout << w << " ";
     }
 
@@ -41,7 +41,7 @@ public:
         cout << "\" are :\n";
 
         Trie* current = this;
-        for (const auto& w : beginning) {
+        for (const auto& w : beginning) {  
             if (current->children.find(w) == current->children.end()) {
                 cout << " No such sentence in the dictionary.\n";
                 return;
@@ -59,10 +59,10 @@ public:
             cout << "\n";
             return;
         }
-        for (const auto& child : node->children) {
+        for (const auto& [key, child] : node->children) { 
             std::vector<std::string> newPrefix = prefix;
-            newPrefix.push_back(child.first);
-            printEndings(child.second, newPrefix);
+            newPrefix.push_back(key);
+            printEndings(child, newPrefix);
         }
     }
 
@@ -84,26 +84,13 @@ public:
     }
 };
 
-
 int main(){
     Trie dictionary;
     dictionary.load("sample.txt");
-    //dictionary.load("hamletEN.txt");
 
     dictionary.printPossibleEndings({"Curiosity"});
     dictionary.printPossibleEndings({"Curiosity", "killed"});
     dictionary.printPossibleEndings({"The", "mouse","was","killed"});
-
-    /* cout << "Beginning of sentence (ended with single .): ";
-    string word;
-    vector<string> sentence;
-    while(true){
-        cin >> word;
-        if(word == ".")
-            break;
-        sentence.push_back(word);
-        dictionary.printPossibleEndings(sentence);
-    }*/
     return 0;
 }
 /* Expected output:

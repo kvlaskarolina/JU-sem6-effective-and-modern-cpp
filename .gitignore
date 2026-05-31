@@ -1,3 +1,6 @@
 lab/examples
 test
-*.DS_Store  
+.DS_Store 
+.vscode/
+*.log
+*.tmp

@@ -100,13 +100,9 @@ int main(){
   V y{4,4,2,5,3,2,3,4,2,1};
 
   cout << "Lazy operations :\n";
-  // It does not create temporary Vectors
-  // It computes resulting vector coordinate by coordinate
-  // (evaluating whole expression)
   V z = v + x + 3 * y - 2 * x;
   cout << z << endl;
   
-  // Computes only one coordinate of Vector
   int e = (z+x+y)[2];
   cout << " e = " << e << endl;
   V w = v + x + 3 * y - 2 * x;

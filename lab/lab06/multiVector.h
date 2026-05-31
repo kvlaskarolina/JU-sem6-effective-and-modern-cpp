@@ -3,6 +3,8 @@
 #include <tuple>
 #include <iostream>
 
+/////////////////////
+
 template <typename T, typename... Ts>
 struct index_of;
 
@@ -16,6 +18,7 @@ struct index_of<T, T, Rest...> {
     static constexpr std::size_t value = 0;
 };
 
+/////////////////////
 
 template <typename T, typename... Ts>
 struct mv_is_one_of : std::false_type {};
@@ -25,6 +28,8 @@ struct mv_is_one_of<T, First, Rest...>
     : std::conditional_t<std::is_same<T, First>::value,
                          std::true_type,
                          mv_is_one_of<T, Rest...>> {};
+
+/////////////////////
 
 template <typename... Types>
 class MultiVector {
