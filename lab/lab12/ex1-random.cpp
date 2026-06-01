@@ -37,6 +37,7 @@ struct Array{
 	long long computeSum(){
 	    sum = 0;
 		for(int x : a){
+            sum += x;
 		}
 		return sum;
 	}
@@ -49,7 +50,7 @@ int main(){
 	std::thread t1(&A::generateArray, &array);
 //  What happens if you uncomment this line?
 //  std::thread t2(&A::generateArray, &array);
-//	t2.join();
+// 	t2.join();
 	t1.join();
 	for(int i=0; i<40; i++){
 		cout << array.a[0+i] << "  ";

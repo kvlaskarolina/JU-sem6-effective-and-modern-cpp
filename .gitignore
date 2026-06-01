@@ -4,3 +4,7 @@ test
 .vscode/
 *.log
 *.tmp
+*.zip
+lab/lab12
+lab/lab13
+lab/lab07/testtest

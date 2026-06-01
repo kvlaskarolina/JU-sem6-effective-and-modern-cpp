@@ -1,98 +1,121 @@
+
 #include <iostream>
 #include <initializer_list>
 #include <algorithm>
-
+#include <utility>
+#include <type_traits>
+ 
 using namespace std;
-
+ 
+ 
 template <typename L, typename R>
 struct VecAdd {
-    const L& lhs;
-    const R& rhs;
-    VecAdd(const L& l, const R& r) : lhs(l), rhs(r) {}
+    L lhs;
+    R rhs;
+    template<typename LL, typename RR>
+    VecAdd(LL&& l, RR&& r) : lhs(std::forward<LL>(l)), rhs(std::forward<RR>(r)) {}
     int operator[](int i) const { return lhs[i] + rhs[i]; }
 };
-
+ 
 template <typename L, typename R>
 struct VecSub {
-    const L& lhs;
-    const R& rhs;
-    VecSub(const L& l, const R& r) : lhs(l), rhs(r) {}
+    L lhs;
+    R rhs;
+    template<typename LL, typename RR>
+    VecSub(LL&& l, RR&& r) : lhs(std::forward<LL>(l)), rhs(std::forward<RR>(r)) {}
     int operator[](int i) const { return lhs[i] - rhs[i]; }
 };
-
+ 
 template <typename R>
 struct VecScalarMul {
     int scalar;
-    const R& rhs;
-    VecScalarMul(int s, const R& r) : scalar(s), rhs(r) {}
+    R rhs;
+    template<typename RR>
+    VecScalarMul(int s, RR&& r) : scalar(s), rhs(std::forward<RR>(r)) {}
     int operator[](int i) const { return scalar * rhs[i]; }
 };
-
+ 
+ 
 template <int N>
 class Vector {
     int data[N];
+ 
+    template<typename Expr>
+    using IsNotVector = std::enable_if_t<
+        !std::is_same<typename std::decay<Expr>::type, Vector>::value>;
+ 
 public:
     Vector() {
         for (int i = 0; i < N; ++i) data[i] = 0;
-        cout << " Default constr" << endl;
+        cout << " Default constr\n";
     }
+ 
     Vector(std::initializer_list<int> list) {
-        cout << " Init list constr" << endl;
+        cout << " Init list constr\n";
         auto it = list.begin();
-        for (int i = 0; i < N && it != list.end(); i++) {
-            data[i] = *it++;
-        }
+        for (int i = 0; i < N; ++i)
+            data[i] = (it != list.end()) ? *it++ : 0;
     }
-    Vector(const Vector& m) {
-        std::copy(m.data, m.data + N, data);
-        cout << " Copy constr" << endl;
+ 
+    Vector(const Vector& other) {
+        std::copy(other.data, other.data + N, data);
+        cout << " Copy constr\n";
     }
-    template <typename Expr>
-    Vector(const Expr& expr) {
-        cout << " Default constr" << endl;
-        for (int i = 0; i < N; ++i) {
+ 
+    Vector(Vector&& other) noexcept {
+        std::copy(other.data, other.data + N, data);
+        cout << " Move constr\n";
+    }
+ 
+    template <typename Expr, typename = IsNotVector<Expr>>
+    Vector(Expr&& expr) {
+        cout << " Expr constr\n";
+        for (int i = 0; i < N; ++i)
             data[i] = expr[i];
-        }
     }
-    int operator[](int index) const {
-        return data[index];
+ 
+    template <typename Expr, typename = IsNotVector<Expr>>
+    Vector& operator=(Expr&& expr) {
+        for (int i = 0; i < N; ++i)
+            data[i] = expr[i];
+        return *this;
     }
-    int& operator[](int index) {
-        return data[index];
-    }
-    friend ostream& operator<<(ostream& out, const Vector& m) {
-        for (int i = 0; i < N; i++) {
-            out << m.data[i] << (i == N - 1 ? "" : ", ");
-        }
+ 
+    int  operator[](int i) const { return data[i]; }
+    int& operator[](int i)       { return data[i]; }
+ 
+    friend ostream& operator<<(ostream& out, const Vector& v) {
+        for (int i = 0; i < N; ++i)
+            out << v.data[i] << (i == N-1 ? "" : ", ");
         return out;
     }
 };
-
-template <typename L, int N>
-VecAdd<L, Vector<N>> operator+(const L& lhs, const Vector<N>& rhs) {
-    return VecAdd<L, Vector<N>>(lhs, rhs);
-}
+ 
+// ── Operatory — budują węzły drzewa (perfect forwarding) ─────────────────
+ 
 template <typename L, typename R>
-VecAdd<L, R> operator+(const L& lhs, const R& rhs) {
-    return VecAdd<L, R>(lhs, rhs);
+auto operator+(L&& lhs, R&& rhs)
+    -> VecAdd<typename std::decay<L>::type, typename std::decay<R>::type>
+{
+    return VecAdd<typename std::decay<L>::type, typename std::decay<R>::type>(
+        std::forward<L>(lhs), std::forward<R>(rhs));
 }
-template <typename L, int N>
-VecSub<L, Vector<N>> operator-(const L& lhs, const Vector<N>& rhs) {
-    return VecSub<L, Vector<N>>(lhs, rhs);
-}
+ 
 template <typename L, typename R>
-VecSub<L, R> operator-(const L& lhs, const R& rhs) {
-    return VecSub<L, R>(lhs, rhs);
+auto operator-(L&& lhs, R&& rhs)
+    -> VecSub<typename std::decay<L>::type, typename std::decay<R>::type>
+{
+    return VecSub<typename std::decay<L>::type, typename std::decay<R>::type>(
+        std::forward<L>(lhs), std::forward<R>(rhs));
 }
-template <int N>
-VecScalarMul<Vector<N>> operator*(int s, const Vector<N>& v) {
-    return VecScalarMul<Vector<N>>(s, v);
-}
+ 
 template <typename R>
-VecScalarMul<R> operator*(int s, const R& expr) {
-    return VecScalarMul<R>(s, expr);
+auto operator*(int s, R&& expr)
+    -> VecScalarMul<typename std::decay<R>::type>
+{
+    return VecScalarMul<typename std::decay<R>::type>(s, std::forward<R>(expr));
 }
-
+ 
 int main(){
   using V = Vector<10>;
   V v{1,2,3,4,5,6,7,8,9,10};
