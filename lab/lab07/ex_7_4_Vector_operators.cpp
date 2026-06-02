@@ -91,7 +91,6 @@ public:
     }
 };
  
-// ── Operatory — budują węzły drzewa (perfect forwarding) ─────────────────
  
 template <typename L, typename R>
 auto operator+(L&& lhs, R&& rhs)

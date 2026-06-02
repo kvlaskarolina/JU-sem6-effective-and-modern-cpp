@@ -2,41 +2,41 @@
 using namespace std;
 
 long double operator"" _km(long double x){
-    return static_cast<long double>(x * 1000);
+    return (x * 1000);
 }
 long double operator"" _m(long double x){
-    return static_cast<long double>(x);
+    return (x);
 }
 long double operator"" _cm(long double x){
-    return static_cast<long double>(x * 0.01);
+    return (x * 0.01);
 }
 long double operator"" _km(unsigned long long x){
-    return static_cast<long double>(x * 1000);
+    return (x * 1000);
 }
 long double operator"" _m(unsigned long long x){
-    return static_cast<long double>(x);
+    return (x);
 }
 long double operator"" _cm(unsigned long long x){
-    return static_cast<long double>(x * 0.01);
+    return (x * 0.01);
 }
 
 long double operator"" _h(long double x){
-    return static_cast<long double>(x * 3600);
+    return (x * 3600);
 }
 long double operator"" _s(long double x){
-    return static_cast<long double>(x);
+    return (x);
 }
 long double operator"" _ms(long double x){
-    return static_cast<long double>(x * 0.001);
+    return (x * 0.001);
 }
 long double operator"" _h(unsigned long long x){
-    return static_cast<long double>(x * 3600);
+    return (x * 3600);
 }
 long double operator"" _s(unsigned long long x){
-    return static_cast<long double>(x);
+    return (x);
 }
 long double operator"" _ms(unsigned long long x){
-    return static_cast<long double>(x * 0.001);
+    return (x * 0.001);
 }
 
 /**
