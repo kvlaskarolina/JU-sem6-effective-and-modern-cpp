@@ -11,11 +11,14 @@
 #include <chrono>
 using namespace std;
 
+
+std::mutex random_mutex;
+
 template <int N>
 struct Array{
     int a[N];
-    int i  = 0;
-    int value = 1;
+    // int i  = 0;
+    // int value = 1;
 	long long sum = 0;
 
 	int f(int x){
@@ -23,21 +26,23 @@ struct Array{
 		return (y*y+1);
 	}
 
-	void generateArray(){
-		while(i<N){
-		    a[i++] = rand();
-		}
-		i = 0;
-		while(i<N){
-			a[i] = f(a[i]);
-			i++;
-		}
+	void generateArray(int begin, int end) {
+        for (int i = begin; i < end; ++i)
+            a[i] = gen();
+
+        for (int i = begin; i < end; ++i)
+            a[i] = f(a[i]);
+    }
+
+	int gen(){
+		std::lock_guard<std::mutex> lock(random_mutex);
+		return rand();
 	}
 	
 	long long computeSum(){
 	    sum = 0;
 		for(int x : a){
-            sum += x;
+			sum += x;
 		}
 		return sum;
 	}
@@ -47,11 +52,11 @@ int main(){
 	srand(2019);
 	using A = Array<1000>;
 	A array;
-	std::thread t1(&A::generateArray, &array);
-//  What happens if you uncomment this line?
-//  std::thread t2(&A::generateArray, &array);
-// 	t2.join();
-	t1.join();
+	std::thread t1(&A::generateArray, &array, 0,   500);
+    std::thread t2(&A::generateArray, &array, 500, 1000);
+
+    t1.join();
+    t2.join();
 	for(int i=0; i<40; i++){
 		cout << array.a[0+i] << "  ";
 	}

@@ -12,8 +12,7 @@ template <typename L, typename R>
 struct VecAdd {
     L lhs;
     R rhs;
-    template<typename LL, typename RR>
-    VecAdd(LL&& l, RR&& r) : lhs(std::forward<LL>(l)), rhs(std::forward<RR>(r)) {}
+    VecAdd(L&& l, R&& r) : lhs(std::forward<L>(l)), rhs(std::forward<R>(r)) {}
     int operator[](int i) const { return lhs[i] + rhs[i]; }
 };
  
