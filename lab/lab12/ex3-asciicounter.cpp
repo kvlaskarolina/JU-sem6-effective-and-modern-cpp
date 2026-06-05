@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
     }
 
     
-    std::cout << "\nPary plików z tą samą sumą:\n";
+    std::cout << "\nta sama suma\n";
     bool found = false;
     for (size_t i = 0; i < files.size(); i++) {
         for (size_t j = i + 1; j < files.size(); j++) {
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (!found)
-        std::cout << "Brak par z tą samą sumą.\n";
+        std::cout << "---\n";
 
     return 0;
 }
