@@ -5,6 +5,7 @@
 #include "EasyBMP.h"
 #include <complex>
 #include <chrono>
+#include <thread>
 
 using namespace std;
 typedef complex<double> Complex;
@@ -18,6 +19,8 @@ typedef complex<double> Complex;
  * @param y2           maximal y
  * @return             functional object
  */
+
+ // here mutex not needed
 auto scaleFromPixelToComplex(int imageWidth, int imageHeight,
                              double x1, double y1, double x2, double y2){
     double sx = (x2-x1)/imageWidth;
@@ -69,6 +72,7 @@ int main( int argc, char* argv[] )
 
     auto pixelToComplex = scaleFromPixelToComplex(imageWidth, imageHeight, x1, y1, x2, y2);
 
+
     auto iterationsToPixel = [](size_t numerOfIterations){
         RGBApixel pixel;
         pixel.Blue = 0;
@@ -82,21 +86,37 @@ int main( int argc, char* argv[] )
         return pixel;
     };
 
+    auto renderRows = [&](int rowBegin, int rowEnd){
+        for(int y = rowBegin; y < rowEnd; y++){
+            for(unsigned x = 0; x < imageWidth; x++){
+                Complex c = pixelToComplex(x, y);
+                auto numberOfIteration = MandelbrotSetIterations(c, maxNumberOfIteration, escapeThreshold);
+                auto pixel = iterationsToPixel(numberOfIteration);
+                Output.SetPixel(x, y, pixel);
+            }
+        }
+    };
+
     auto start = std::chrono::steady_clock::now();
 
-    for(unsigned y=0; y<imageHeight; y++){
-        for(unsigned x=0; x<imageWidth; x++){
+    const int T = 10;
+    std::vector<std::thread> threads;
 
-            Complex c = pixelToComplex(x, y);
-
-            auto numberOfIteration = MandelbrotSetIterations(c, maxNumberOfIteration, escapeThreshold);
-            auto pixel = iterationsToPixel(numberOfIteration);
-            Output.SetPixel(x,y,pixel) ;
-        }
+    for(int t = 0; t < T; t++){
+        int rowBegin = t       * imageHeight / T;
+        int rowEnd   = (t + 1) * imageHeight / T;
+        threads.emplace_back(renderRows, rowBegin, rowEnd);
     }
+
+    for(auto& th : threads)
+        th.join();
+
     auto stop = std::chrono::steady_clock::now();
     cout << "Time used : " << std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() << " ms."<< endl;
     cout << "Bitmap written to " << fileName << "." << endl;
     Output.WriteToFile( fileName );
     return 0;
 }
+
+// before Time used : 1121 ms.
+// now Time used : 312 ms.
